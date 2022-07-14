@@ -1,0 +1,53 @@
+*{
+    margin: 0 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+body, #root {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: steelblue;
+}
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 0px;
+
+    color: white;
+    background-color: black;
+
+    font-size: 30px;
+
+    width: 100%;
+
+    padding-left: 0.5em;
+    padding-right: 1em;
+
+    box-shadow: 0px 1px 2px 2px rgb(41, 41, 41);
+}
+header a {
+    color: rgb(0, 86, 167);
+    text-decoration: none;
+    margin-bottom: 0.5em;
+}
+header:hover a {
+    text-decoration: none;
+    color: default;
+}
+header:visited a {
+    color: default;
+}
+
+.error {
+    color: red;
+}
