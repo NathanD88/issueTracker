@@ -12,6 +12,9 @@ const Login = ({login, error, changeView}) => {
     const handleLogin = () => {
         const user = {username, password};
         login(user);
+        document.querySelector("#floatingUser").value = "";
+        document.querySelector("#floatingPassword").value = "";
+        document.querySelector("#floatingUser").focus();
     }
     return(
         <div className="card d-flex flex-column p-4 shadow">

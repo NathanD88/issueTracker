@@ -29,7 +29,6 @@ const App = () => {
         })
     }
     const login = (_user) => {
-        console.log(_user)
         fetch('/app/login', {
             method: 'POST',
             headers: { "Content-Type":"application/json" },
@@ -37,7 +36,6 @@ const App = () => {
         })
         .then(response => response.json())
         .then(result => {
-            console.log(result)
             const {error, dbuser} = result;
             if(error){
                 setError(`*${error}*`);
@@ -45,11 +43,36 @@ const App = () => {
                 setError("");
             }
             if(dbuser){
+                setError("");
                 Store.setItem("user", dbuser);
                 setUser(dbuser);
                 setLogged(true);
             }
         })
+    }
+    const logout = () => {
+        console.log("logging out");
+        let _username = Store.getItem("user").username;
+        fetch('/app/logout', {
+            method: 'POST',
+            headers: { "Content-Type":"application/json" },
+            body: JSON.stringify({username: _username})
+        })
+        .then(response => response.json())
+        .then(result => {
+            const {error, dbuser} = result;
+            if(error){
+                setError(`*${error}*`);
+            } else {
+                setError("");
+            }
+            
+            Store.clear();
+            setUser(null);
+            setLogged(false);
+            return window.location.reload();
+        })
+        
     }
 
     useEffect(() => {
@@ -66,10 +89,11 @@ const App = () => {
                 console.log(result)
                 const {decoded, error} = result;
                 if(error){
-                    Store.clear();
-                    setUser(null);
-                    setLogged(false);
-                    return window.location.reload();
+                    logout();
+                    // Store.removeItem("user");
+                    // setUser(null);
+                    // setLogged(false);
+                    // return window.location.reload();
                 }
                 if(decoded){
                     setUser(_user);
@@ -92,7 +116,11 @@ const App = () => {
             </> : 
             <>
                 <Header />
-                {user && <>{user.username}</>}
+                {user && 
+                <>
+                    {"Welcome, " + user.username}
+                    <button className="btn btn-link" onClick={logout}>logout</button>
+                </>}
             </>
         }
         </>

@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/public", express.static(process.cwd()+"/public"));
 
-const main = require('./routes/main');
+const main = require('./routes/app');
 app.use('/app', main);
 
 app.get('/', (req,res) => {
