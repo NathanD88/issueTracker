@@ -48,7 +48,7 @@ router.post('/login', validateUserInput, (req,res) => {
                 lastLogin: user.lastLogin
             }
             console.log(dbuser)
-            let token = jwt.sign(dbuser, process.env.JWT_SECRET, { expiresIn: '60s' });
+            let token = jwt.sign(dbuser, process.env.JWT_SECRET, { expiresIn: '1h' });
             dbuser.token = token;
             return res.json({ dbuser })
         } else {

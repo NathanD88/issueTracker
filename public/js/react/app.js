@@ -46,34 +46,12 @@ const App = () => {
                 setError("");
                 Store.setItem("user", dbuser);
                 setUser(dbuser);
-                setLogged(true);
+                //setLogged(true);
+                window.location.href = '/home';
             }
         })
     }
-    const logout = () => {
-        console.log("logging out");
-        let _username = Store.getItem("user").username;
-        fetch('/app/logout', {
-            method: 'POST',
-            headers: { "Content-Type":"application/json" },
-            body: JSON.stringify({username: _username})
-        })
-        .then(response => response.json())
-        .then(result => {
-            const {error, dbuser} = result;
-            if(error){
-                setError(`*${error}*`);
-            } else {
-                setError("");
-            }
-            
-            Store.clear();
-            setUser(null);
-            setLogged(false);
-            return window.location.reload();
-        })
-        
-    }
+    
 
     useEffect(() => {
         let _user = Store.getItem("user");
@@ -89,41 +67,30 @@ const App = () => {
                 console.log(result)
                 const {decoded, error} = result;
                 if(error){
-                    logout();
-                    // Store.removeItem("user");
-                    // setUser(null);
-                    // setLogged(false);
-                    // return window.location.reload();
+                    Store.removeItem("user");
+                    setUser(null);
+                    return window.location.reload();
                 }
                 if(decoded){
                     setUser(_user);
-                    setLogged(true);
+                    window.location.href = "/home";
                 }
             })
         }
     }, [])
 
     return(
-        <>
-        {
-            !logged ? 
+        <>{!user &&
             <>
                 <Header />
                 {view == "login" ? 
                     <Login login={login} error={error} changeView={changeView}/> : 
                     <Register register={register} error={error} changeView={changeView}/>
                 }
-            </> : 
-            <>
-                <Header />
-                {user && 
-                <>
-                    {"Welcome, " + user.username}
-                    <button className="btn btn-link" onClick={logout}>logout</button>
-                </>}
             </>
         }
-        </>
+            
+        </> 
     )
 }
 
