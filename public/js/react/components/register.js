@@ -17,6 +17,9 @@ const Register = ({register, error, changeView}) => {
         const user = {username, password, passwordConfirm};
         register(user);
     }
+    const viewChangeLogin = () => {
+        changeView("login");
+    }
     return(
         <div className="card d-flex flex-column p-4 shadow">
             <h2 style={{textAlign: "center"}} className="mb-4">Register</h2>
@@ -34,7 +37,7 @@ const Register = ({register, error, changeView}) => {
                 <label for="floatingPasswordConfirm">Password</label>
             </div>
             <button className="btn-primary rounded" onClick={handleRegister}>Register</button>
-            <button className=" btn btn-link" onClick={changeView}>Login</button>
+            <button className=" btn btn-link" onClick={viewChangeLogin}>Login</button>
         </div>
     )
 }

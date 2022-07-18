@@ -16,6 +16,12 @@ const Login = ({login, error, changeView}) => {
         document.querySelector("#floatingPassword").value = "";
         document.querySelector("#floatingUser").focus();
     }
+    const viewChangeRegister = () => {
+        changeView("register")
+    }
+    const viewChangeReset = () => {
+        changeView("reset")
+    }
     return(
         <div className="card d-flex flex-column p-4 shadow">
             <h2 style={{textAlign: "center"}} className="mb-4">Login</h2>
@@ -29,7 +35,8 @@ const Login = ({login, error, changeView}) => {
                 <label for="floatingPassword">Password</label>
             </div>
             <button className="btn-primary rounded mb-2" onClick={handleLogin}>login</button>
-            <button className=" btn btn-link" onClick={changeView}>Register</button>
+            <button className=" btn btn-link p-0" onClick={viewChangeReset}>forgot password</button>
+            <button className=" btn btn-link p-0" onClick={viewChangeRegister}>Register</button>
         </div>
     )
 }

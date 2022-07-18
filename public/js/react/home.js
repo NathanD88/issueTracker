@@ -1,11 +1,30 @@
+
 let container = document.querySelector("#root");
 const root = createRoot(container);
 
+const message1 = {
+    title:"System Administrator", 
+    text:"add a close function to these notifcations"
+}
+const message2 = {
+    title:"Nathan", 
+    text:"or make them only appear under certian conditions"
+}
+
+let refreshTick;
 const Home = () => {
     const [user, setUser] = useState("");
-
+    const [tab, setTab] = useState("main")
+    const [users, setUsers] = useState();
+    
+    const refresh = () => {
+        fetchUsers().then(data => setUsers(data?.users))
+        
+    }
     const logout = () => {
         console.log("logging out");
+        clearInterval(refreshTick);
+        socket.emit('logout')
         let _username = Store.getItem("user").username;
         fetch('/app/logout', {
             method: 'POST',
@@ -25,6 +44,18 @@ const Home = () => {
         })
         
     }
+    const changeTab = (newTab) => {
+        if(newTab == "users"){
+            fetchUsers()
+            .then(result => {
+                const _users = result.users;
+                if(_users) setUsers(_users)
+                setTab(newTab);
+            })
+        } else {
+            setTab(newTab);
+        }
+    }
     useEffect(() => {
         let _user = Store.getItem("user");
         if(_user){
@@ -41,6 +72,9 @@ const Home = () => {
                 }
                 if(decoded){
                     setUser(_user);
+                    refreshTick = setInterval(() => {
+                        refresh();
+                    }, 30000)
                 }
             })
         } else {
@@ -53,7 +87,12 @@ const Home = () => {
             {
                 user && 
                 <>
-                    <Titlebar username={user.username} logout={logout}/>
+                    <Titlebar username={user.username} logout={logout} role={user.role}/>
+                    <Menubar selectTab={changeTab}/>
+                    {tab == "main" && <><Main notifications={[message1,message2]}/></>}
+                    {tab == "users" && <Users users={users}/>}
+                    {tab == "messages" && <Messages />}
+                    {tab == "issues" && <Issues />}
                 </>
             }
         </>

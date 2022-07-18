@@ -27,3 +27,7 @@ const Store = {
         window.sessionStorage.clear();
     }
 }
+
+const fetchUsers = async() => {
+    return fetch('/home/users').then(response => response.json())
+}

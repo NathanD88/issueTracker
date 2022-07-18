@@ -14,6 +14,9 @@ body, #root {
 
     background-color: steelblue;
 }
+body::-webkit-scrollbar {
+    display: none;
+}
 header {
     display: flex;
     flex-direction: column;
@@ -69,4 +72,13 @@ header:visited a {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+}
+.menubar {
+    display:"flex"; 
+    flex-direction:"row";
+    position: absolute;
+    top: 80px;
+}
+.active {
+    box-shadow: inset 0 8px 6px -6px black;
 }

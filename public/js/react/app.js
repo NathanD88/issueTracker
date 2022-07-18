@@ -4,11 +4,11 @@ const root = createRoot(container);
 const App = () => {
     const [view, setView] = useState("login");
     const [error, setError] = useState("");
-    const [logged, setLogged] = useState(false);
+    const [verified, setVerified] = useState(false);
     const [user, setUser] = useState(null)
     
-    const changeView = () => {
-        setView(view == "login" ? "register" : "login")
+    const changeView = (_view) => {
+        setView(_view);
     }
     const register = (newUser) => {
         fetch('/app/register', {
@@ -24,7 +24,7 @@ const App = () => {
                 setError(`*${error}*`);
             }
             if(dbuser){
-                changeView();
+                changeView("login");
             }
         })
     }
@@ -51,7 +51,47 @@ const App = () => {
             }
         })
     }
-    
+    const updateUserPassword = (_user) => {
+        fetch('/app/update', {
+            method: 'POST',
+            headers: { "Content-Type":"application/json" },
+            body: JSON.stringify({username: _user.username, password: _user.password, passwordConfirm: _user.passwordConfirm})
+        })
+        .then(response => response.json())
+        .then(result => {
+            const {error, dbuser} = result;
+            if(error){
+                setError(`*${error}*`);
+            } else {
+                setError("");
+            }
+            if(dbuser){
+                changeView("login");
+            }
+        })
+    }
+    const verifyUser = (username) => {
+        //console("verifying user ", + username)
+        fetch('/app/verify', {
+            method: 'POST',
+            headers: { "Content-Type":"application/json" },
+            body: JSON.stringify({username: username})
+        })
+        .then(response => response.json())
+        .then(result => {
+            const {error, dbuser} = result;
+            if(error){
+                setError(`*${error}*`);
+            } else {
+                setError("");
+            }
+            if(dbuser){
+                setVerified(true);
+            } else {
+                setError("invalid username")
+            }
+        })
+    }
 
     useEffect(() => {
         let _user = Store.getItem("user");
@@ -83,9 +123,16 @@ const App = () => {
         <>{!user &&
             <>
                 <Header />
-                {view == "login" ? 
-                    <Login login={login} error={error} changeView={changeView}/> : 
-                    <Register register={register} error={error} changeView={changeView}/>
+                {view == "login" && <Login login={login} error={error} changeView={changeView}/>} 
+                {view == "register" && <Register register={register} error={error} changeView={changeView}/>}
+                {view == "reset" && 
+                    <Reset 
+                        verified={verified} 
+                        verifyUser={verifyUser} 
+                        error={error} 
+                        updateUserPassword={updateUserPassword} 
+                        changeView={changeView}
+                    />
                 }
             </>
         }

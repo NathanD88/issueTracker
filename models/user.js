@@ -12,7 +12,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        default: "none"
+        default: "user"
     },
     createdOn: {
         type: Date,

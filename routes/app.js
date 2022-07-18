@@ -33,8 +33,8 @@ const validatePasswordComplexity = (req,res,next) => {
 }
 
 // post requests
-router.post('/login', validateUserInput, (req,res) => {
-    User.findOne({ username: req.body.username }, 'username status lastLogin password -_id', (err, user) => {
+router.post('/login', validateUserInput, async(req,res) => {
+    User.findOne({ username: req.body.username }, 'username status lastLogin password role -_id', (err, user) => {
         if(err) return res.json({ error:err });
         if(!user) return res.json({ error:"username does not exist" });
         
@@ -42,15 +42,18 @@ router.post('/login', validateUserInput, (req,res) => {
             if(err)return res.json({ error:err })
         });
         if(match){
-            let dbuser = {
-                username: user.username, 
-                status: user.status, 
-                lastLogin: user.lastLogin
-            }
-            console.log(dbuser)
-            let token = jwt.sign(dbuser, process.env.JWT_SECRET, { expiresIn: '1h' });
-            dbuser.token = token;
-            return res.json({ dbuser })
+            User.findOneAndUpdate({username:user.username}, {status:"Online", lastLogin: Date.now()}, (err, _user) => {
+                if(err)return res.json({ error:err })
+                let dbuser = {
+                    username: _user.username, 
+                    status: _user.status, 
+                    lastLogin: _user.lastLogin,
+                    role: _user.role
+                }
+                let token = jwt.sign(dbuser, process.env.JWT_SECRET, { expiresIn: '1h' });
+                dbuser.token = token;
+                return res.json({ dbuser })
+            })
         } else {
             return res.json({ error:"incorrect password" })
         }
@@ -67,7 +70,6 @@ router.post('/register', validateRegisterInput, validatePasswordComplexity, (req
         });
 
         const newUser = new User({username, password:hash});
-        console.log(newUser)
         newUser.save(err => {
             if(err) return res.json({ error:err });
         })
@@ -76,11 +78,11 @@ router.post('/register', validateRegisterInput, validatePasswordComplexity, (req
 })
 router.post('/logout', (req,res) => {
     const {username} = req.body;
+    console.log("user logging out -", username)
     if(!username) return res.json({ error:"no username supplied" })
-    User.findOne({ username:username }, (err, user) => {
+    User.findOneAndUpdate({ username:username }, {status:"Offline"}, (err, user) => {
         if(err) return res.json({ error:err })
         if(!user) return req.json({ error:"username not found" })
-        console.log(`user has logged out`)
         return res.json({ success:true })
     })
 })
@@ -88,11 +90,36 @@ router.post('/decode', async(req,res) => {
     const {token} = req.body;
     if(!token) return res.json({ error:"invalid token" });
 
-    let decoded = jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
         if(err) return res.json({ error:err })
         return res.json({decoded:data})
     })
 
 })
+router.post('/verify', (req,res) => {
+    const {username} = req.body;
+    if(!username) return res.json({ error:"invalid username" });
+
+    User.findOne({ username:username }, (err, user) => {
+        if(err) return res.json({ error:err })
+        if(!user) return req.json({ error:"username not found" })
+        return res.json({ dbuser:user })
+    })
+
+})
+router.post('/update', validateRegisterInput, validatePasswordComplexity, (req,res) => {
+    const {username,password} = req.body;
+    let hash = bcrypt.hashSync(password, salt, err => {
+        if(err) return res.json({ error:err })
+    }); 
+
+    User.findOneAndUpdate({ username:username }, { password:hash }, (err, user) => {
+        if(err) return res.json({ error:err })
+        
+        return res.json({ dbuser:user })
+    })
+
+})
+
 
 module.exports = router;
