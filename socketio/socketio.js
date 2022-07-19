@@ -1,6 +1,8 @@
 const axios = require("axios");
 const Message = require(process.cwd()+'/models/message')
 let clients = new Object();
+const message_url = 'http://localhost:5000/home/message';
+const headers = { "Content-type": "application/json"};
 
 let cleanTime;
 const cleanup = (user) => {
@@ -50,8 +52,8 @@ const socketio = (client, io) => {
         let {recipient} = message;
         let sender = getClientById(client.id)
         message.sender = sender;
-        //console.log(message);
-        axios.post('http://localhost:5000/home/message',{message},{headers: { "Content-type": "application/json"}})
+        console.log(message)
+        //axios.post(message_url, {message} , headers);
         io.to(clients[recipient]).emit("receiveMessage", message)
         io.to(clients[recipient]).emit("message", {title:"admin.io", text:`new message from ${sender}`})
     })

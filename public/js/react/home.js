@@ -16,10 +16,11 @@ const Home = () => {
     const [user, setUser] = useState("");
     const [tab, setTab] = useState("main")
     const [users, setUsers] = useState();
+    const [messages, setMessages] = useState([]);
     
     const refresh = () => {
         fetchUsers().then(data => setUsers(data?.users))
-        
+        fetchMessages().then(data => setMessages(data?.messages))
     }
     const logout = () => {
         console.log("logging out");
@@ -52,6 +53,13 @@ const Home = () => {
                 if(_users) setUsers(_users)
                 setTab(newTab);
             })
+        } else if(newTab == "messages") {
+            fetchMessages()
+            .then(result => {
+                const msgs = result.messages;
+                if(messages != msgs) setMessages(msgs);
+                setTab(newTab);
+            })
         } else {
             setTab(newTab);
         }
@@ -72,9 +80,10 @@ const Home = () => {
                 }
                 if(decoded){
                     setUser(_user);
+                    refresh();
                     refreshTick = setInterval(() => {
                         refresh();
-                    }, 30000)
+                    }, 15000)
                 }
             })
         } else {
@@ -91,7 +100,7 @@ const Home = () => {
                     <Menubar selectTab={changeTab}/>
                     {tab == "main" && <><Main notifications={[message1,message2]}/></>}
                     {tab == "users" && <Users users={users}/>}
-                    {tab == "messages" && <Messages />}
+                    {tab == "messages" && <Messages messages={messages} refresh={refresh} user={user.username}/>}
                     {tab == "issues" && <Issues />}
                 </>
             }

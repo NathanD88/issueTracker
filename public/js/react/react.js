@@ -27,7 +27,9 @@ const Store = {
         window.sessionStorage.clear();
     }
 }
-
 const fetchUsers = async() => {
     return fetch('/home/users').then(response => response.json())
+}
+const fetchMessages = async() => {
+    return fetch('home/messages').then(response => response.json());
 }
