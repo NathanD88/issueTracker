@@ -30,6 +30,7 @@ app.use((req,res,next) => {
 
 mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true}, err => {
     if(err)return console.log(`could not connect to DB - ${err}`);
+    console.timeStamp("program started")
 
     const listener = server.listen(port, () => {console.log(`listening on port ${listener.address().port}`)});
 

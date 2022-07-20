@@ -7,6 +7,7 @@ socket.on('getUsername', () => {
 })
 socket.on('message', message => {
     createToast(message);
+    //console.log(Messages)
 })
 socket.on('receiveMessage', message => {
     console.log(message);

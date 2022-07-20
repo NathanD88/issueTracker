@@ -42,11 +42,11 @@ const socketio = (client, io) => {
             return;
         }
         clients[_username] = client.id;
-        io.to(client.id).emit('message', {title:"admin.io", text:`Welcome back, ${_username}`});
+        //io.to(client.id).emit('message', {title:"admin.io", text:`Welcome back, ${_username}`});
         client.broadcast.emit('message', {title:"admin.io", text:`${_username} has logged in`})
-        setTimeout(() => {
-            io.to(client.id).emit('message', {title:"admin.io", text:`no new messages.`});
-        }, 2000);
+        // setTimeout(() => {
+        //     io.to(client.id).emit('message', {title:"admin.io", text:`no new messages.`});
+        // }, 2000);
     })
     client.on('sendMessage', message => {
         let {recipient} = message;

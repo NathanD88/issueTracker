@@ -15,6 +15,7 @@ const validateUserInput = (req,res,next) => {
 const validateRegisterInput = (req,res,next) => {
     const {username, password, passwordConfirm} = req.body;
     if(!(username && password && passwordConfirm)) return res.json({ error:"missing credentials" });
+    if(username.indexOf(" ") >= 0) return res.json({ error:"invalid username: spaces not allowed" })
     if(password != passwordConfirm) return res.json({ error:"passwords do not match" })
     next();
 }
