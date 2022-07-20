@@ -25,9 +25,9 @@ router.get('/messages', (req,res) => {
 //posts
 router.post('/message', (req,res) => {
     const {message} = req.body;
-    console.log(message)
+    //console.log(message)
     const {recipient} = message;
-    console.log("routing", message)
+    //console.log("routing", message)
     User.findOne({ username:recipient }, (err, user) => {
         if(err) return res.json({error:err});
         if(!user) return res.json({error:"user does not exist"});
@@ -41,13 +41,20 @@ router.post('/message', (req,res) => {
 })
 router.post('/delete', (req,res) => {
     const {id} = req.body;
-    if(!id) return res.json({ error:"no id supplied" })
+    if(!id) return res.json({ error:"no id supplied" });
+    if(id == "*"){
+        Message.deleteMany({}, (err) => {
+            if(err) return res.json({ error:err });
 
-    // Message.deleteOne({ _id:id }, (err) => {
-    //     if(err) return res.json({ error:err })
-
-    //     return res.json({ deleted:true })
-    // })
+            return res.json({ deleted:true });
+        })
+    } else {
+        Message.deleteOne({ _id:id }, (err) => {
+            if(err) return res.json({ error:err })
+    
+            return res.json({ deleted:true })
+        })
+    }
 })
 
 module.exports = router;

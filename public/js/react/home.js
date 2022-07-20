@@ -100,7 +100,7 @@ const Home = () => {
                     <Menubar selectTab={changeTab}/>
                     {tab == "main" && <><Main notifications={[message1,message2]}/></>}
                     {tab == "users" && <Users users={users}/>}
-                    {tab == "messages" && <Messages messages={messages} refresh={refresh} user={user.username}/>}
+                    {tab == "messages" && <Messages messages={messages} refresh={refresh} user={user} users={users}/>}
                     {tab == "issues" && <Issues />}
                 </>
             }
